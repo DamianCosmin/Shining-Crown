@@ -12,8 +12,9 @@
 	<limits.h>
 	<sstream>
 
-1674490730 source:c:\users\alex\desktop\shining-crown\main.cpp
-	"Graphics Libraries\graphics.h"
+1674504756 source:c:\users\alex\desktop\shining-crown\main.cpp
+	<graphics.h>
+	<winbgim.h>
 	<iostream>
 	<cstring>
 	<cstdlib>

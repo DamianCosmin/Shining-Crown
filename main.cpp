@@ -32,15 +32,15 @@ int main()
     readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 50, 200, 200, 350);
     readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 200, 200, 350, 350);
     readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 350, 200, 500, 350);
-    readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 500, 200, 650, 350);
-    readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 650, 200, 800, 350);
+    readimagefile("Images\\New Photos\\crown.jpg", 500, 200, 650, 350);
+    readimagefile("Images\\New Photos\\watermelon.jpg", 650, 200, 800, 350);
 
     // Second line
-    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 50, 350, 200, 500);
-    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 200, 350, 350, 500);
-    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 350, 350, 500, 500);
-    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 500, 350, 650, 500);
-    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 650, 350, 800, 500);
+    readimagefile("Images\\New Photos\\bell.jpg", 50, 350, 200, 500);
+    readimagefile("Images\\New Photos\\cheries.jpg", 200, 350, 350, 500);
+    readimagefile("Images\\New Photos\\grapes.jpg", 350, 350, 500, 500);
+    readimagefile("Images\\New Photos\\lemon.jpg", 500, 350, 650, 500);
+    readimagefile("Images\\New Photos\\plum.jpg", 650, 350, 800, 500);
 
     getch();
     return 0;
