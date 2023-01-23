@@ -1,4 +1,6 @@
 #include <graphics.h>
+#include <winbgim.h>
+
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
@@ -6,66 +8,40 @@
 
 using namespace std;
 
-const int WIDTH = 500;
-const int HEIGHT = 500;
-const char SLOTS_NAMES[12][20] = {"ORANGE", "PLUM", "CHERRY", "LEMON", "BELL", "WATERMELON", "GRAPES", "SEVEN", "DOLLAR SCATTER", "STAR SCATTER", "CROWN"};
-const int SLOTS_NUMBER = 11;
-
-struct Slot{
-    int id;
-    char name[20];
-};
-
-struct node{
-    Slot slot;
-    node *next;
-};
-
-void addNode(node *&p , int value){
-    node *q, *add;
-
-    add = new node;
-    add -> slot.id = value;
-    strcpy(add -> slot.name, SLOTS_NAMES[value]);
-    add -> next = NULL;
-
-    if(p == NULL){
-        p = add;
-    }
-    else{
-        q = p;
-        while(q -> next != NULL){
-            q = q -> next;
-        }
-
-        q -> next = add;
-    }
-}
-
-void showList(node *p){
-    node *q;
-    q = p;
-    while(q != NULL){
-        cout << q -> slot.id << " " << q -> slot.name  << '\n';
-        q = q -> next;
-    }
-}
+const int WIDTH = 850;
+const int HEIGHT = 850;
 
 int main()
 {
-    //initwindow(WIDTH, HEIGHT, "Shining Crown");
-    //readimagefile("Images/shining-crown.jpg", 0, 0, 500, 500);
-    //getch();
-    node *firstNode = NULL;
-    int number;
+    initwindow(WIDTH, HEIGHT, "Shining Crown");
 
-    srand(time(NULL));
-
-    for(int i = 1; i <= SLOTS_NUMBER; i++){
-        number = rand() % SLOTS_NUMBER;
-        addNode(firstNode, number);
+    // Generate Border
+    setcolor(RED);
+    for(int i = 0; i <= 10; i++){
+        rectangle(30+i,30+i,820-i,520-i);
     }
 
-    showList(firstNode);
+    // First line
+    readimagefile("Images\\New Photos\\Star Scatter.jpg", 50, 50, 200, 200);
+    readimagefile("Images\\New Photos\\Star Scatter.jpg", 200, 50, 350, 200);
+    readimagefile("Images\\New Photos\\Star Scatter.jpg", 350, 50, 500, 200);
+    readimagefile("Images\\New Photos\\Star Scatter.jpg", 500, 50, 650, 200);
+    readimagefile("Images\\New Photos\\Star Scatter.jpg", 650, 50, 800, 200);
+
+    // Second line
+    readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 50, 200, 200, 350);
+    readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 200, 200, 350, 350);
+    readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 350, 200, 500, 350);
+    readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 500, 200, 650, 350);
+    readimagefile("Images\\New Photos\\Dollar Scatter.jpg", 650, 200, 800, 350);
+
+    // Second line
+    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 50, 350, 200, 500);
+    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 200, 350, 350, 500);
+    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 350, 350, 500, 500);
+    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 500, 350, 650, 500);
+    readimagefile("Images\\New Photos\\Lucky Seven.jpg", 650, 350, 800, 500);
+
+    getch();
     return 0;
 }

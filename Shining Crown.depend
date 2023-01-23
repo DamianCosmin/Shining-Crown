@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1674154763 source:c:\users\cosmin damian\desktop\shining-crown\main.cpp
-	"Graphics Libraries\graphics.h"
+1674493053 source:c:\users\cosmin damian\desktop\shining-crown\main.cpp
+	<graphics.h>
+	<winbgim.h>
 	<iostream>
 	<cstring>
 	<cstdlib>
