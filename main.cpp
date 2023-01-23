@@ -1,4 +1,4 @@
-#include "Graphics Libraries\graphics.h"
+#include <graphics.h>
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
