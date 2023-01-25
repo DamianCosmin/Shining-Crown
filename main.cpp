@@ -6,41 +6,89 @@
 #include <cstdlib>
 #include <time.h>
 
+#define TOTAL_SLOTS 11
 using namespace std;
 
 const int WIDTH = 850;
 const int HEIGHT = 850;
+const char IMAGES_PATH[20][100] = {
+    "Images\\orange.jpg",
+    "Images\\plum.jpg",
+    "Images\\lemon.jpg",
+    "Images\\cherry.jpg",
+    "Images\\bell.jpg",
+    "Images\\watermelon.jpg",
+    "Images\\grapes.jpg",
+    "Images\\lucky-seven.jpg",
+    "Images\\dollar-scatter.jpg",
+    "Images\\star-scatter.jpg",
+    "Images\\crown.jpg"
+};
+int VALUES_MATRIX[3][5];
 
-int main()
-{
-    initwindow(WIDTH, HEIGHT, "Shining Crown");
+int generateRandomNumber(){
+    return (rand() % TOTAL_SLOTS);
+}
+
+void generateVisuals(){
+    // Generate Title
+    setcolor(YELLOW);
+    settextstyle(BOLD_FONT, 0, 6);
+    outtextxy(225,15,"SHINING CROWN");
 
     // Generate Border
     setcolor(RED);
     for(int i = 0; i <= 10; i++){
-        rectangle(30+i,30+i,820-i,520-i);
+        rectangle(30+i,80+i,820-i,570-i);
     }
 
+    // Generate Money Info
+    setcolor(LIGHTGREEN);
+    for(int i = 0; i <= 10; i++){
+        rectangle(250+i,600+i,600-i,750-i);
+    }
+
+    settextstyle(COMPLEX_FONT, 0, 2);
+    outtextxy(275,625,"Current Money: ");
+    outtextxy(450,625,"1000$");
+
+    outtextxy(275,665,"Current bet: ");
+    outtextxy(450,665,"100$");
+
+    outtextxy(275,705,"Last Win: ");
+    outtextxy(450,705,"200$");
+
+    // Generate Roll Button - not finished
+    readimagefile("roll.jpg", 650, 600, 500, 750);
+}
+
+int main()
+{
+    initwindow(WIDTH, HEIGHT, "Shining Crown");
+    srand(time(NULL));
+
+    generateVisuals();
+
     // First line
-    readimagefile("Images\\star-scatter.jpg", 50, 50, 200, 200);
-    readimagefile("Images\\dollar-scatter.jpg", 200, 50, 350, 200);
-    readimagefile("Images\\dollar-scatter.jpg", 350, 50, 500, 200);
-    readimagefile("Images\\dollar-scatter.jpg", 500, 50, 650, 200);
-    readimagefile("Images\\star-scatter.jpg", 650, 50, 800, 200);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 50, 100, 200, 250);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 200, 100, 350, 250);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 350, 100, 500, 250);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 500, 100, 650, 250);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 650, 100, 800, 250);
 
     // Second line
-    readimagefile("Images\\crown.jpg", 50, 200, 200, 350);
-    readimagefile("Images\\watermelon.jpg", 200, 200, 350, 350);
-    readimagefile("Images\\lucky-seven.jpg", 350, 200, 500, 350);
-    readimagefile("Images\\bell.jpg", 500, 200, 650, 350);
-    readimagefile("Images\\crown.jpg", 650, 200, 800, 350);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 50, 250, 200, 400);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 200, 250, 350, 400);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 350, 250, 500, 400);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 500, 250, 650, 400);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 650, 250, 800, 400);
 
-    // Second line
-    readimagefile("Images\\orange.jpg", 50, 350, 200, 500);
-    readimagefile("Images\\plum.jpg", 200, 350, 350, 500);
-    readimagefile("Images\\lemon.jpg", 350, 350, 500, 500);
-    readimagefile("Images\\cherry.jpg", 500, 350, 650, 500);
-    readimagefile("Images\\grapes.jpg", 650, 350, 800, 500);
+    // Third line
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 50, 400, 200, 550);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 200, 400, 350, 550);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 350, 400, 500, 550);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 500, 400, 650, 550);
+    readimagefile(IMAGES_PATH[generateRandomNumber()], 650, 400, 800, 550);
 
     getch();
     return 0;
