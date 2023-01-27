@@ -6,9 +6,13 @@
 #include <cstdlib>
 #include <time.h>
 
+#define SLOT_ROWS 3
+#define SLOT_COLUMNS 5
+#define SLOT_PIXELSIZE 150
 #define CHANCES 140
 using namespace std;
 
+/// VARIABLES
 const int WIDTH = 850;
 const int HEIGHT = 850;
 const char IMAGES_PATH[20][100] = {
@@ -22,12 +26,48 @@ const char IMAGES_PATH[20][100] = {
     "Images\\watermelon.jpg",
     "Images\\grapes.jpg",
     "Images\\lucky-seven.jpg",
-    // Stage 3 - special
+    // Stage 3 - special symbols
     "Images\\dollar-scatter.jpg",
     "Images\\star-scatter.jpg",
     "Images\\crown.jpg"
 };
 int VALUES_MATRIX[3][5];
+
+struct node{
+    int info;
+    node *next;
+};
+node *SLOT_LISTS[5];
+
+/// FUNCTIONS
+void addNode(node *&p , int value){
+    node *q, *add;
+    add = new node;
+    add -> info = value;
+    add -> next = NULL;
+
+    if(p == NULL){
+        p = add;
+    }
+    else{
+        q = p;
+        while(q -> next != NULL){
+            q = q -> next;
+        }
+
+        q -> next = add;
+    }
+}
+
+void showList(node *p){
+    node *q;
+    q = p;
+    while(q != NULL){
+        cout << q -> info << " ";
+        q = q -> next;
+    }
+    cout << '\n';
+}
 
 int generateRandomPhotoID(){
     int random = (rand() % CHANCES);
@@ -122,26 +162,16 @@ int main()
 
     generateVisuals();
 
-    // First line
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 50, 100, 200, 250);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 200, 100, 350, 250);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 350, 100, 500, 250);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 500, 100, 650, 250);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 650, 100, 800, 250);
+    for(int j = 0; j < SLOT_COLUMNS; j++){
+        for(int i = 0; i < SLOT_ROWS; i++){
+            int randomID = generateRandomPhotoID();
 
-    // Second line
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 50, 250, 200, 400);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 200, 250, 350, 400);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 350, 250, 500, 400);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 500, 250, 650, 400);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 650, 250, 800, 400);
-
-    // Third line
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 50, 400, 200, 550);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 200, 400, 350, 550);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 350, 400, 500, 550);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 500, 400, 650, 550);
-    readimagefile(IMAGES_PATH[generateRandomPhotoID()], 650, 400, 800, 550);
+            VALUES_MATRIX[i][j] = randomID;
+            addNode(SLOT_LISTS[j], randomID);
+            readimagefile(IMAGES_PATH[randomID], 50+j*SLOT_PIXELSIZE, 100+i*SLOT_PIXELSIZE, 200+j*SLOT_PIXELSIZE, 250+i*SLOT_PIXELSIZE);
+        }
+        showList(SLOT_LISTS[j]);
+    }
 
     getch();
     return 0;
