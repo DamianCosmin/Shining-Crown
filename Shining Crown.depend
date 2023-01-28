@@ -1,11 +1,12 @@
 # depslib dependency file v1.0
-1674857034 source:c:\users\cosmin damian\desktop\shining-crown\main.cpp
+1674944793 source:c:\users\cosmin damian\desktop\shining-crown\main.cpp
 	<graphics.h>
 	<winbgim.h>
 	<iostream>
 	<cstring>
 	<cstdlib>
 	<time.h>
+	<charconv>
 
 1674149051 c:\users\cosmin damian\desktop\shining-crown\graphics libraries\graphics.h
 	<windows.h>

@@ -5,10 +5,14 @@
 #include <cstring>
 #include <cstdlib>
 #include <time.h>
+#include <charconv>
 
 #define SLOT_ROWS 3
 #define SLOT_COLUMNS 5
 #define SLOT_PIXELSIZE 150
+#define MAX_DIGITS_MONEY 12
+#define MAX_DIGITS_BET 5
+#define MAX_DIGITS_LASTWIN 12
 #define CHANCES 140
 using namespace std;
 
@@ -32,6 +36,12 @@ const char IMAGES_PATH[20][100] = {
     "Images\\crown.jpg"
 };
 int VALUES_MATRIX[3][5];
+int MONEY = 1000;
+int BET = 100;
+int LASTWIN = 0;
+char MONEY_CHAR[MAX_DIGITS_MONEY];
+char BET_CHAR[MAX_DIGITS_BET];
+char LASTWIN_CHAR[MAX_DIGITS_LASTWIN];
 
 struct node{
     int info;
@@ -114,6 +124,26 @@ int generateRandomPhotoID(){
     // Every return is the ID of the photo
 }
 
+void convertMoneyValuesToStrings(int money, int bet, int lastwin){
+    // Converts money amount(Int) to Char Array
+    char money_aux[MAX_DIGITS_MONEY] = "";
+    to_chars(money_aux, money_aux + MAX_DIGITS_MONEY, money);
+    strcpy(MONEY_CHAR, money_aux);
+    strcat(MONEY_CHAR, "$");
+
+    // Converts bet amount(Int) to Char Array
+    char bet_aux[MAX_DIGITS_BET] = "";
+    to_chars(bet_aux, bet_aux + MAX_DIGITS_BET, bet);
+    strcpy(BET_CHAR, bet_aux);
+    strcat(BET_CHAR, "$");
+
+    // Converts last win amount(Int) to Char Array
+    char lastwin_aux[MAX_DIGITS_LASTWIN] = "";
+    to_chars(lastwin_aux, lastwin_aux + MAX_DIGITS_LASTWIN, lastwin);
+    strcpy(LASTWIN_CHAR, lastwin_aux);
+    strcat(LASTWIN_CHAR, "$");
+}
+
 void generateVisuals(){
     // Generate Title
     setcolor(YELLOW);
@@ -127,6 +157,8 @@ void generateVisuals(){
     }
 
     // Generate Money Info
+    convertMoneyValuesToStrings(MONEY, BET, LASTWIN);
+
     setcolor(LIGHTGREEN);
     for(int i = 0; i <= 10; i++){
         rectangle(250+i,600+i,600-i,750-i);
@@ -134,16 +166,16 @@ void generateVisuals(){
 
     settextstyle(COMPLEX_FONT, 0, 2);
     outtextxy(275,625,"Current Money: ");
-    outtextxy(450,625,"1000$");
+    outtextxy(450,625,MONEY_CHAR);
 
     outtextxy(275,665,"Current bet: ");
-    outtextxy(450,665,"100$");
+    outtextxy(450,665,BET_CHAR);
 
     outtextxy(275,705,"Last Win: ");
-    outtextxy(450,705,"200$");
+    outtextxy(450,705,LASTWIN_CHAR);
 
     // Generate Buttons
-    readimagefile("Images\\spin-button.jpg", 650, 600, 500, 750);
+    readimagefile("Images\\spin-button.jpg", 650, 600, 800, 750);
     readimagefile("Images\\gamble-button.jpg", 50, 600, 200, 750);
 
     // Generate Bets
@@ -153,6 +185,47 @@ void generateVisuals(){
     readimagefile("Images\\bet-100.jpg",430,775,480,825);
     readimagefile("Images\\bet-250.jpg",490,775,540,825);
     readimagefile("Images\\bet-500.jpg",550,775,600,825);
+}
+
+void detectMouseClicks(){
+    int mouseX = 0, mouseY = 0;
+    getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
+
+    // Spin
+    if(mouseX >= 650 && mouseX <= 800 && mouseY >= 600 && mouseY <= 750){
+        cout << "Spin!" << '\n';
+    }
+
+    // Gamble
+    if(mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750){
+        cout << "Gamble!" << '\n';
+    }
+
+    // Bets
+    if(mouseX >= 250 && mouseX <= 300 && mouseY >= 775 && mouseY <= 825){
+        BET = 10;
+        cout << "Set bet to 10$" << '\n';
+    }
+    if(mouseX >= 310 && mouseX <= 360 && mouseY >= 775 && mouseY <= 825){
+        BET = 20;
+        cout << "Set bet to 20$" << '\n';
+    }
+    if(mouseX >= 370 && mouseX <= 420 && mouseY >= 775 && mouseY <= 825){
+        BET = 50;
+        cout << "Set bet to 50$" << '\n';
+    }
+    if(mouseX >= 430 && mouseX <= 480 && mouseY >= 775 && mouseY <= 825){
+        BET = 100;
+        cout << "Set bet to 100$" << '\n';
+    }
+    if(mouseX >= 490 && mouseX <= 540 && mouseY >= 775 && mouseY <= 825){
+        BET = 250;
+        cout << "Set bet to 250$" << '\n';
+    }
+    if(mouseX >= 550 && mouseX <= 600 && mouseY >= 775 && mouseY <= 825){
+        BET = 500;
+        cout << "Set bet to 500$" << '\n';
+    }
 }
 
 int main()
@@ -171,6 +244,10 @@ int main()
             readimagefile(IMAGES_PATH[randomID], 50+j*SLOT_PIXELSIZE, 100+i*SLOT_PIXELSIZE, 200+j*SLOT_PIXELSIZE, 250+i*SLOT_PIXELSIZE);
         }
         showList(SLOT_LISTS[j]);
+    }
+
+    while(1){
+        detectMouseClicks();
     }
 
     getch();
