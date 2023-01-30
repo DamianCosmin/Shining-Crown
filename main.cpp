@@ -16,6 +16,7 @@
 #define CHANCES 140
 using namespace std;
 
+
 /// VARIABLES
 const int WIDTH = 850;
 const int HEIGHT = 850;
@@ -49,6 +50,7 @@ struct node{
 };
 node *SLOT_LISTS[5];
 
+
 /// FUNCTIONS
 void addNode(node *&p , int value){
     node *q, *add;
@@ -77,6 +79,16 @@ void showList(node *p){
         q = q -> next;
     }
     cout << '\n';
+}
+
+void deleteList(node *&p){
+    node *q;
+    while(p != NULL){
+        q = p;
+        p = p -> next;
+        delete q;
+    }
+    p = NULL;
 }
 
 int generateRandomPhotoID(){
@@ -121,7 +133,7 @@ int generateRandomPhotoID(){
         return 10;
     }
 
-    // Every return is the ID of the photo
+    /// Every return is the ID of the photo
 }
 
 void convertMoneyValuesToStrings(int money, int bet, int lastwin){
@@ -157,14 +169,14 @@ void generateVisuals(){
     }
 
     // Generate Money Info
-    convertMoneyValuesToStrings(MONEY, BET, LASTWIN);
-
     setcolor(LIGHTGREEN);
     for(int i = 0; i <= 10; i++){
         rectangle(250+i,600+i,600-i,750-i);
     }
 
+    convertMoneyValuesToStrings(MONEY, BET, LASTWIN);
     settextstyle(COMPLEX_FONT, 0, 2);
+
     outtextxy(275,625,"Current Money: ");
     outtextxy(450,625,MONEY_CHAR);
 
@@ -187,6 +199,57 @@ void generateVisuals(){
     readimagefile("Images\\bet-500.jpg",550,775,600,825);
 }
 
+// Updates the values of money, bet and last win
+void updateMoney(){
+    MONEY_CHAR[0] = NULL;
+    convertMoneyValuesToStrings(MONEY,BET,LASTWIN);
+    readimagefile("Images\\black-bar.jpg",450,625,580,645);
+    outtextxy(450,625,MONEY_CHAR);
+}
+
+void updateBet(){
+    BET_CHAR[0] = NULL;
+    convertMoneyValuesToStrings(MONEY,BET,LASTWIN);
+    readimagefile("Images\\black-bar.jpg",450,665,580,685);
+    outtextxy(450,665,BET_CHAR);
+}
+
+void updateLastwin(){
+    LASTWIN_CHAR[0] = NULL;
+    convertMoneyValuesToStrings(MONEY,BET,LASTWIN);
+    readimagefile("Images\\black-bar.jpg",450,705,580,725);
+    outtextxy(450,705,MONEY_CHAR);
+}
+
+void spin(){
+    if(MONEY >= BET){
+        MONEY -= BET;
+        updateMoney();
+
+        readimagefile("Images\\black-background.jpg",50,100,800,550);
+        delay(100);
+
+        for(int j = 0; j < SLOT_COLUMNS; j++){
+            deleteList(SLOT_LISTS[j]);
+        }
+
+        for(int j = 0; j < SLOT_COLUMNS; j++){
+            for(int i = 0; i < SLOT_ROWS; i++){
+                int randomID = generateRandomPhotoID();
+
+                VALUES_MATRIX[i][j] = randomID;
+                addNode(SLOT_LISTS[j], randomID);
+                readimagefile(IMAGES_PATH[randomID], 50+j*SLOT_PIXELSIZE, 100+i*SLOT_PIXELSIZE, 200+j*SLOT_PIXELSIZE, 250+i*SLOT_PIXELSIZE);
+            }
+            delay(100);
+            showList(SLOT_LISTS[j]);
+        }
+    }
+    else{
+        cout << "Not enough money!" << '\n';
+    }
+}
+
 void detectMouseClicks(){
     int mouseX = 0, mouseY = 0;
     getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
@@ -194,6 +257,7 @@ void detectMouseClicks(){
     // Spin
     if(mouseX >= 650 && mouseX <= 800 && mouseY >= 600 && mouseY <= 750){
         cout << "Spin!" << '\n';
+        spin();
     }
 
     // Gamble
@@ -204,28 +268,42 @@ void detectMouseClicks(){
     // Bets
     if(mouseX >= 250 && mouseX <= 300 && mouseY >= 775 && mouseY <= 825){
         BET = 10;
+        updateBet();
         cout << "Set bet to 10$" << '\n';
     }
     if(mouseX >= 310 && mouseX <= 360 && mouseY >= 775 && mouseY <= 825){
         BET = 20;
+        updateBet();
         cout << "Set bet to 20$" << '\n';
     }
     if(mouseX >= 370 && mouseX <= 420 && mouseY >= 775 && mouseY <= 825){
         BET = 50;
+        updateBet();
         cout << "Set bet to 50$" << '\n';
     }
     if(mouseX >= 430 && mouseX <= 480 && mouseY >= 775 && mouseY <= 825){
         BET = 100;
+        updateBet();
         cout << "Set bet to 100$" << '\n';
     }
     if(mouseX >= 490 && mouseX <= 540 && mouseY >= 775 && mouseY <= 825){
         BET = 250;
+        updateBet();
         cout << "Set bet to 250$" << '\n';
     }
     if(mouseX >= 550 && mouseX <= 600 && mouseY >= 775 && mouseY <= 825){
         BET = 500;
+        updateBet();
         cout << "Set bet to 500$" << '\n';
     }
+}
+
+bool gameCondition(){
+    // Money must be between the minimum bet and max INT range (2 Billion)
+    if(MONEY >= 10 && MONEY <= 2000000000){
+        return true;
+    }
+    return false;
 }
 
 int main()
@@ -235,18 +313,7 @@ int main()
 
     generateVisuals();
 
-    for(int j = 0; j < SLOT_COLUMNS; j++){
-        for(int i = 0; i < SLOT_ROWS; i++){
-            int randomID = generateRandomPhotoID();
-
-            VALUES_MATRIX[i][j] = randomID;
-            addNode(SLOT_LISTS[j], randomID);
-            readimagefile(IMAGES_PATH[randomID], 50+j*SLOT_PIXELSIZE, 100+i*SLOT_PIXELSIZE, 200+j*SLOT_PIXELSIZE, 250+i*SLOT_PIXELSIZE);
-        }
-        showList(SLOT_LISTS[j]);
-    }
-
-    while(1){
+    while(gameCondition()){
         detectMouseClicks();
     }
 
