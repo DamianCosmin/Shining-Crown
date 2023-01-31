@@ -36,6 +36,23 @@ const char IMAGES_PATH[20][100] = {
     "Images\\star-scatter.jpg",
     "Images\\crown.jpg"
 };
+
+const int MULTIPLICATORS[20][5] = {
+    // Stage 1
+    0,0,1,3,15,
+    0,0,1,3,15,
+    0,0,1,3,15,
+    0,0,1,3,15,
+    0,0,2,4,20,
+    //Stage 2
+    0,0,4,12,70,
+    0,0,4,12,70,
+    0,0,5,25,500,
+    //Stage 3
+    0,0,5,20,100,
+    0,0,200,0,0,
+    0,0,0,0,0
+};
 int VALUES_MATRIX[3][5];
 int MONEY = 1000;
 int BET = 100;
@@ -218,7 +235,81 @@ void updateLastwin(){
     LASTWIN_CHAR[0] = NULL;
     convertMoneyValuesToStrings(MONEY,BET,LASTWIN);
     readimagefile("Images\\black-bar.jpg",450,705,580,725);
-    outtextxy(450,705,MONEY_CHAR);
+    outtextxy(450,705,LASTWIN_CHAR);
+}
+
+void winningsCalculator(int ID, int number)
+{
+    int win = BET * MULTIPLICATORS[ID][number-1];
+    MONEY += win;
+    LASTWIN += win;
+}
+
+void checkLine1()
+{
+    int temp_line[5], temp_ID, cnt = 0 ;
+
+    temp_line[0]=VALUES_MATRIX[0][0];
+    temp_line[1]=VALUES_MATRIX[0][1];
+    temp_line[2]=VALUES_MATRIX[0][2];
+    temp_line[3]=VALUES_MATRIX[0][3];
+    temp_line[4]=VALUES_MATRIX[0][4];
+
+    temp_ID=temp_line[0];
+    for(int i= 0;i < SLOT_COLUMNS ; i++)
+    {
+        if(temp_ID == temp_line[i])
+            cnt++;
+    }
+
+    winningsCalculator(temp_ID , cnt);
+}
+
+void checkLine2()
+{
+    int temp_line[5], temp_ID, cnt = 0 ;
+
+    temp_line[0]=VALUES_MATRIX[1][0];
+    temp_line[1]=VALUES_MATRIX[1][1];
+    temp_line[2]=VALUES_MATRIX[1][2];
+    temp_line[3]=VALUES_MATRIX[1][3];
+    temp_line[4]=VALUES_MATRIX[1][4];
+
+    temp_ID=temp_line[0];
+    for(int i= 0;i < SLOT_COLUMNS ; i++)
+    {
+        if(temp_ID == temp_line[i])
+            cnt++;
+    }
+
+    winningsCalculator(temp_ID , cnt);
+}
+
+void checkLine3()
+{
+    int temp_line[5], temp_ID, cnt = 0 ;
+
+    temp_line[0]=VALUES_MATRIX[2][0];
+    temp_line[1]=VALUES_MATRIX[2][1];
+    temp_line[2]=VALUES_MATRIX[2][2];
+    temp_line[3]=VALUES_MATRIX[2][3];
+    temp_line[4]=VALUES_MATRIX[2][4];
+
+    temp_ID=temp_line[0];
+    for(int i= 0;i < SLOT_COLUMNS ; i++)
+    {
+        if(temp_ID == temp_line[i])
+            cnt++;
+    }
+
+    winningsCalculator(temp_ID , cnt);
+}
+
+void checkAllLines(){
+    checkLine1();
+    checkLine2();
+    checkLine3();
+    updateMoney();
 }
 
 void spin(){
@@ -244,6 +335,17 @@ void spin(){
             delay(100);
             showList(SLOT_LISTS[j]);
         }
+
+        LASTWIN = 0;
+        checkAllLines();
+        updateLastwin();
+
+        for(int i = 0; i < 11; i++){
+            for(int j = 0; j < SLOT_COLUMNS; j++){
+                cout << MULTIPLICATORS[i][j] << " ";
+            }
+            cout << '\n';
+        }
     }
     else{
         cout << "Not enough money!" << '\n';
@@ -255,7 +357,7 @@ void detectMouseClicks(){
     getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
 
     // Spin
-    if(mouseX >= 650 && mouseX <= 800 && mouseY >= 600 && mouseY <= 750){
+    if((mouseX >= 650 && mouseX <= 800 && mouseY >= 600 && mouseY <= 750) ){
         cout << "Spin!" << '\n';
         spin();
     }
@@ -315,6 +417,11 @@ int main()
 
     while(gameCondition()){
         detectMouseClicks();
+    }
+
+    while(MONEY < 10)
+    {
+        readimagefile("Images\\lose-screen.jpg",0,0,850,850);
     }
 
     getch();
