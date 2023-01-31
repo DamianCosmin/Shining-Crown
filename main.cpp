@@ -47,15 +47,16 @@ const int MULTIPLICATORS[20][5] = {
     //Stage 2
     0,0,4,12,70,
     0,0,4,12,70,
-    0,0,5,25,500,
+    0,1,5,25,500,
     //Stage 3
     0,0,5,20,100,
     0,0,200,0,0,
     0,0,0,0,0
 };
 int VALUES_MATRIX[3][5];
-int MONEY = 1000;
+int MONEY = 5000;
 int BET = 100;
+int WIN = 0;
 int LASTWIN = 0;
 char MONEY_CHAR[MAX_DIGITS_MONEY];
 char BET_CHAR[MAX_DIGITS_BET];
@@ -238,78 +239,230 @@ void updateLastwin(){
     outtextxy(450,705,LASTWIN_CHAR);
 }
 
-void winningsCalculator(int ID, int number)
-{
-    int win = BET * MULTIPLICATORS[ID][number-1];
-    MONEY += win;
-    LASTWIN += win;
+void winningsCalculator(int ID, int number){
+    WIN += (BET * MULTIPLICATORS[ID][number-1]);
 }
 
-void checkLine1()
-{
-    int temp_line[5], temp_ID, cnt = 0 ;
+void checkLine1(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
 
-    temp_line[0]=VALUES_MATRIX[0][0];
-    temp_line[1]=VALUES_MATRIX[0][1];
-    temp_line[2]=VALUES_MATRIX[0][2];
-    temp_line[3]=VALUES_MATRIX[0][3];
-    temp_line[4]=VALUES_MATRIX[0][4];
+    temp_line[0] = VALUES_MATRIX[0][0];
+    temp_line[1] = VALUES_MATRIX[0][1];
+    temp_line[2] = VALUES_MATRIX[0][2];
+    temp_line[3] = VALUES_MATRIX[0][3];
+    temp_line[4] = VALUES_MATRIX[0][4];
 
-    temp_ID=temp_line[0];
-    for(int i= 0;i < SLOT_COLUMNS ; i++)
-    {
-        if(temp_ID == temp_line[i])
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
             cnt++;
+        }
+        i++;
     }
 
-    winningsCalculator(temp_ID , cnt);
+    winningsCalculator(temp_ID, cnt);
 }
 
-void checkLine2()
-{
-    int temp_line[5], temp_ID, cnt = 0 ;
+void checkLine2(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
 
-    temp_line[0]=VALUES_MATRIX[1][0];
-    temp_line[1]=VALUES_MATRIX[1][1];
-    temp_line[2]=VALUES_MATRIX[1][2];
-    temp_line[3]=VALUES_MATRIX[1][3];
-    temp_line[4]=VALUES_MATRIX[1][4];
+    temp_line[0] = VALUES_MATRIX[1][0];
+    temp_line[1] = VALUES_MATRIX[1][1];
+    temp_line[2] = VALUES_MATRIX[1][2];
+    temp_line[3] = VALUES_MATRIX[1][3];
+    temp_line[4] = VALUES_MATRIX[1][4];
 
-    temp_ID=temp_line[0];
-    for(int i= 0;i < SLOT_COLUMNS ; i++)
-    {
-        if(temp_ID == temp_line[i])
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
             cnt++;
+        }
+        i++;
     }
 
-    winningsCalculator(temp_ID , cnt);
+    winningsCalculator(temp_ID, cnt);
 }
 
-void checkLine3()
-{
-    int temp_line[5], temp_ID, cnt = 0 ;
+void checkLine3(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
 
-    temp_line[0]=VALUES_MATRIX[2][0];
-    temp_line[1]=VALUES_MATRIX[2][1];
-    temp_line[2]=VALUES_MATRIX[2][2];
-    temp_line[3]=VALUES_MATRIX[2][3];
-    temp_line[4]=VALUES_MATRIX[2][4];
+    temp_line[0] = VALUES_MATRIX[2][0];
+    temp_line[1] = VALUES_MATRIX[2][1];
+    temp_line[2] = VALUES_MATRIX[2][2];
+    temp_line[3] = VALUES_MATRIX[2][3];
+    temp_line[4] = VALUES_MATRIX[2][4];
 
-    temp_ID=temp_line[0];
-    for(int i= 0;i < SLOT_COLUMNS ; i++)
-    {
-        if(temp_ID == temp_line[i])
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
             cnt++;
+        }
+        i++;
     }
 
-    winningsCalculator(temp_ID , cnt);
+    winningsCalculator(temp_ID, cnt);
+}
+
+void checkLine4(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
+
+    temp_line[0] = VALUES_MATRIX[0][0];
+    temp_line[1] = VALUES_MATRIX[1][1];
+    temp_line[2] = VALUES_MATRIX[2][2];
+    temp_line[3] = VALUES_MATRIX[1][3];
+    temp_line[4] = VALUES_MATRIX[0][4];
+
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
+            cnt++;
+        }
+        i++;
+    }
+
+    winningsCalculator(temp_ID, cnt);
+}
+
+void checkLine5(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
+
+    temp_line[0] = VALUES_MATRIX[2][0];
+    temp_line[1] = VALUES_MATRIX[1][1];
+    temp_line[2] = VALUES_MATRIX[0][2];
+    temp_line[3] = VALUES_MATRIX[1][3];
+    temp_line[4] = VALUES_MATRIX[2][4];
+
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
+            cnt++;
+        }
+        i++;
+    }
+
+    winningsCalculator(temp_ID, cnt);
+}
+
+void checkLine6(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
+
+    temp_line[0] = VALUES_MATRIX[0][0];
+    temp_line[1] = VALUES_MATRIX[0][1];
+    temp_line[2] = VALUES_MATRIX[1][2];
+    temp_line[3] = VALUES_MATRIX[2][3];
+    temp_line[4] = VALUES_MATRIX[2][4];
+
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
+            cnt++;
+        }
+        i++;
+    }
+
+    winningsCalculator(temp_ID, cnt);
+}
+
+void checkLine7(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
+
+    temp_line[0] = VALUES_MATRIX[2][0];
+    temp_line[1] = VALUES_MATRIX[2][1];
+    temp_line[2] = VALUES_MATRIX[1][2];
+    temp_line[3] = VALUES_MATRIX[0][3];
+    temp_line[4] = VALUES_MATRIX[0][4];
+
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
+            cnt++;
+        }
+        i++;
+    }
+
+    winningsCalculator(temp_ID, cnt);
+}
+
+void checkLine8(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
+
+    temp_line[0] = VALUES_MATRIX[1][0];
+    temp_line[1] = VALUES_MATRIX[2][1];
+    temp_line[2] = VALUES_MATRIX[2][2];
+    temp_line[3] = VALUES_MATRIX[2][3];
+    temp_line[4] = VALUES_MATRIX[1][4];
+
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
+            cnt++;
+        }
+        i++;
+    }
+
+    winningsCalculator(temp_ID, cnt);
+}
+
+void checkLine9(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
+
+    temp_line[0] = VALUES_MATRIX[1][0];
+    temp_line[1] = VALUES_MATRIX[0][1];
+    temp_line[2] = VALUES_MATRIX[0][2];
+    temp_line[3] = VALUES_MATRIX[0][3];
+    temp_line[4] = VALUES_MATRIX[1][4];
+
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
+            cnt++;
+        }
+        i++;
+    }
+
+    winningsCalculator(temp_ID, cnt);
+}
+
+void checkLine10(){
+    int temp_line[5] = {0}, temp_ID, cnt = 0, i = 0;
+
+    temp_line[0] = VALUES_MATRIX[0][0];
+    temp_line[1] = VALUES_MATRIX[1][1];
+    temp_line[2] = VALUES_MATRIX[1][2];
+    temp_line[3] = VALUES_MATRIX[1][3];
+    temp_line[4] = VALUES_MATRIX[0][4];
+
+    temp_ID = temp_line[0];
+    while(i < SLOT_COLUMNS && temp_line[i] == temp_ID){
+        if(temp_line[i] == temp_ID){
+            cnt++;
+        }
+        i++;
+    }
+
+    winningsCalculator(temp_ID, cnt);
 }
 
 void checkAllLines(){
+    WIN = 0;
+
     checkLine1();
     checkLine2();
     checkLine3();
-    updateMoney();
+    checkLine4();
+    checkLine5();
+    checkLine6();
+    checkLine7();
+    checkLine8();
+    checkLine9();
+    checkLine10();
+
+    if(WIN > 0){
+        MONEY += WIN;
+        LASTWIN = WIN;
+        updateMoney();
+        updateLastwin();
+    }
 }
 
 void spin(){
@@ -336,16 +489,7 @@ void spin(){
             showList(SLOT_LISTS[j]);
         }
 
-        LASTWIN = 0;
         checkAllLines();
-        updateLastwin();
-
-        for(int i = 0; i < 11; i++){
-            for(int j = 0; j < SLOT_COLUMNS; j++){
-                cout << MULTIPLICATORS[i][j] << " ";
-            }
-            cout << '\n';
-        }
     }
     else{
         cout << "Not enough money!" << '\n';
