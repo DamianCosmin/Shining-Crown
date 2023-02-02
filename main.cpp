@@ -496,6 +496,15 @@ void spin(){
     }
 }
 
+void gamble(){
+    readimagefile("Images\\black-background.jpg",50,100,800,550);
+
+    //readimagefile("Images\\black-ace.jpg",325,175,525,475);
+    readimagefile("Images\\red-ace.jpg",325,175,525,475);
+    readimagefile("Images\\black-chip.jpg",100,250,250,400);
+    readimagefile("Images\\red-chip.jpg",600,250,750,400);
+}
+
 void detectMouseClicks(){
     int mouseX = 0, mouseY = 0;
     getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
@@ -509,6 +518,7 @@ void detectMouseClicks(){
     // Gamble
     if(mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750){
         cout << "Gamble!" << '\n';
+        gamble();
     }
 
     // Bets
