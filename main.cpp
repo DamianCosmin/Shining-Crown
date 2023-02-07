@@ -58,9 +58,13 @@ int MONEY = 5000;
 int BET = 100;
 int WIN = 0;
 int LASTWIN = 0;
+
 char MONEY_CHAR[MAX_DIGITS_MONEY];
 char BET_CHAR[MAX_DIGITS_BET];
 char LASTWIN_CHAR[MAX_DIGITS_LASTWIN];
+
+bool CANSPIN = true;
+bool CANGAMBLE = false;
 
 struct node{
     int info;
@@ -499,10 +503,32 @@ void spin(){
 void gamble(){
     readimagefile("Images\\black-background.jpg",50,100,800,550);
 
+    // Gamble Text
+    settextstyle(COMPLEX_FONT, 0, 2);
+
+    outtextxy(100,135,"Gamble Money");
+    outtextxy(100,160,MONEY_CHAR);
+
+    outtextxy(615,135,"Gamble Win");
+    outtextxy(615,160,MONEY_CHAR);
+
+    outtextxy(300,530,"Gamble Spins Left : 5");
+
+    outtextxy(380,115,"History");
+    readimagefile("Images\\black-chip.jpg",300,150,350,200);
+    readimagefile("Images\\red-chip.jpg",350,150,400,200);
+    readimagefile("Images\\black-chip.jpg",400,150,450,200);
+    readimagefile("Images\\red-chip.jpg",450,150,500,200);
+    readimagefile("Images\\black-chip.jpg",500,150,550,200);
+
     //readimagefile("Images\\black-ace.jpg",325,175,525,475);
-    readimagefile("Images\\red-ace.jpg",325,175,525,475);
-    readimagefile("Images\\black-chip.jpg",100,250,250,400);
-    readimagefile("Images\\red-chip.jpg",600,250,750,400);
+    readimagefile("Images\\red-ace.jpg",325,225,525,525);
+    readimagefile("Images\\black-chip.jpg",100,300,250,450);
+    readimagefile("Images\\red-chip.jpg",600,300,750,450);
+}
+
+bool canGamble(){
+    return (WIN > 0 && WIN < 35 * BET) ? true : false;
 }
 
 void detectMouseClicks(){
@@ -510,14 +536,30 @@ void detectMouseClicks(){
     getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
 
     // Spin
-    if((mouseX >= 650 && mouseX <= 800 && mouseY >= 600 && mouseY <= 750) ){
+    if((mouseX >= 650 && mouseX <= 800 && mouseY >= 600 && mouseY <= 750) && CANSPIN){
         cout << "Spin!" << '\n';
         spin();
     }
 
     // Gamble
-    if(mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750){
+    if((mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) && canGamble()){
         cout << "Gamble!" << '\n';
+        CANSPIN = false;
+        if(CANGAMBLE == true){
+            CANSPIN = true;
+            CANGAMBLE = false;
+            WIN = 0;
+            // Exit Gamble Mode => WIN = 0
+            // Load Images
+            for(int j = 0; j < SLOT_COLUMNS; j++){
+                for(int i = 0; i < SLOT_ROWS; i++){
+                    readimagefile(IMAGES_PATH[VALUES_MATRIX[i][j]], 50+j*SLOT_PIXELSIZE, 100+i*SLOT_PIXELSIZE, 200+j*SLOT_PIXELSIZE, 250+i*SLOT_PIXELSIZE);
+                }
+            }
+        }
+        else{
+            CANGAMBLE = true;
+        }
         gamble();
     }
 
