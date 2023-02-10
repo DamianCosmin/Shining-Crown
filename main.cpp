@@ -36,6 +36,11 @@ const char IMAGES_PATH[20][100] = {
     "Images\\crown.jpg"
 };
 
+const char GAMBLE_IMAGES_PATH[5][100] = {
+    "Images\\black-ace.jpg",
+    "Images\\red-ace.jpg"
+};
+
 const int MULTIPLICATORS[20][5] = {
     // Stage 1
     0,0,1,3,15,
@@ -499,6 +504,17 @@ void spin(){
 bool canSpin = true;
 bool isGambling = false;
 
+void generateRandomGamble(int value){
+    int randomGamble = rand() % 2;
+    readimagefile(GAMBLE_IMAGES_PATH[randomGamble],325,225,525,525);
+    if(randomGamble == value){
+        cout << "Doubled" << '\n';
+    }
+    else{
+        cout << "Lost the money" << '\n';
+    }
+}
+
 void gamble(){
     canSpin = false;
     isGambling = true;
@@ -525,14 +541,14 @@ void gamble(){
     readimagefile("Images\\black-chip.jpg",500,150,550,200);
 
     // Buttons
-    readimagefile("Images\\red-ace.jpg",325,225,525,525);
+    readimagefile("Images\\back-card.jpg",325,225,525,525);
     readimagefile("Images\\black-chip.jpg",100,300,250,450);
     readimagefile("Images\\red-chip.jpg",600,300,750,450);
 
     while(isGambling){
         getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
 
-        if((mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) || GetAsyncKeyState('C')){
+        if(((mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) || (GetAsyncKeyState('C') & 0x8000))){
             cout << "Exit Gamble Mode!" << '\n';
             isGambling = false;
             canSpin = true;
@@ -549,10 +565,12 @@ void gamble(){
 
         if(mouseX >= 100 && mouseX <= 250 && mouseY >= 300 && mouseY <= 450){
             cout << "Black Gamble" << '\n';
+            generateRandomGamble(0);
         }
 
         if(mouseX >= 600 && mouseX <= 750 && mouseY >= 300 && mouseY <= 450){
             cout << "Red Gamble" << '\n';
+            generateRandomGamble(1);
         }
     }
 }
@@ -566,13 +584,13 @@ void detectMouseClicks(){
     getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
 
     // Spin
-    if(canSpin == true && ((mouseX >= 650 && mouseX <= 800 && mouseY >= 600 && mouseY <= 750) || GetAsyncKeyState(' '))){
+    if(canSpin == true && ((mouseX >= 650 && mouseX <= 800 && mouseY >= 600 && mouseY <= 750) || (GetAsyncKeyState(' ') & 0x8000))){
         cout << "Spin!" << '\n';
         spin();
     }
 
     // Gamble
-    if(canGamble() && ((mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) || GetAsyncKeyState('G'))){
+    if(canGamble() && ((mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) || (GetAsyncKeyState('G') & 0x8000))){
         cout << "Gamble!" << '\n';
         gamble();
     }
