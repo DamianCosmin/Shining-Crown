@@ -10,9 +10,12 @@
 #define SLOT_ROWS 3
 #define SLOT_COLUMNS 5
 #define SLOT_PIXELSIZE 150
+#define CHIP_PIXELSIZE 50
 #define MAX_DIGITS_MONEY 12
 #define MAX_DIGITS_BET 5
 #define MAX_DIGITS_LASTWIN 12
+#define MAX_DIGITS_SPINS 1
+#define MAX_GAMBLE_HISTORY 5
 #define CHANCES 140
 using namespace std;
 
@@ -41,6 +44,11 @@ const char GAMBLE_IMAGES_PATH[5][100] = {
     "Images\\red-ace.jpg"
 };
 
+const char GAMBLE_CHIPS_PATH[5][100] = {
+    "Images\\black-chip.jpg",
+    "Images\\red-chip.jpg"
+};
+
 const int MULTIPLICATORS[20][5] = {
     // Stage 1
     0,0,1,3,15,
@@ -62,10 +70,18 @@ int MONEY = 5000;
 int BET = 100;
 int WIN = 0;
 int LASTWIN = 0;
+int GAMBLE_HISTORY[5];
+int GAMBLE_SPINS = 5;
+int STARS = 0;
 
 char MONEY_CHAR[MAX_DIGITS_MONEY];
 char BET_CHAR[MAX_DIGITS_BET];
 char LASTWIN_CHAR[MAX_DIGITS_LASTWIN];
+char SPINS_CHAR[MAX_DIGITS_SPINS];
+
+bool canSpin = true;
+bool isGambling = false;
+bool generatedStar = false;
 
 struct node{
     int info;
@@ -159,24 +175,36 @@ int generateRandomPhotoID(){
     /// Every return is the ID of the photo
 }
 
-void convertMoneyValuesToStrings(int money, int bet, int lastwin){
+
+void convertMoneyToString(int money){
     // Converts money amount(Int) to Char Array
     char money_aux[MAX_DIGITS_MONEY] = "";
     to_chars(money_aux, money_aux + MAX_DIGITS_MONEY, money);
     strcpy(MONEY_CHAR, money_aux);
     strcat(MONEY_CHAR, "$");
+}
 
+void convertBetToString(int bet){
     // Converts bet amount(Int) to Char Array
     char bet_aux[MAX_DIGITS_BET] = "";
     to_chars(bet_aux, bet_aux + MAX_DIGITS_BET, bet);
     strcpy(BET_CHAR, bet_aux);
     strcat(BET_CHAR, "$");
+}
 
+void convertLastwinToString(int lastwin){
     // Converts last win amount(Int) to Char Array
     char lastwin_aux[MAX_DIGITS_LASTWIN] = "";
     to_chars(lastwin_aux, lastwin_aux + MAX_DIGITS_LASTWIN, lastwin);
     strcpy(LASTWIN_CHAR, lastwin_aux);
     strcat(LASTWIN_CHAR, "$");
+}
+
+void convertGambleSpinsToString(int spinsLeft){
+    // Converts gamble spins(Int) to Char Array
+    char spins_aux[MAX_DIGITS_SPINS] = "";
+    to_chars(spins_aux, spins_aux + MAX_DIGITS_SPINS, spinsLeft);
+    strcpy(SPINS_CHAR, spins_aux);
 }
 
 void generateVisuals(){
@@ -197,7 +225,10 @@ void generateVisuals(){
         rectangle(250+i,600+i,600-i,750-i);
     }
 
-    convertMoneyValuesToStrings(MONEY, BET, LASTWIN);
+    convertMoneyToString(MONEY);
+    convertBetToString(BET);
+    convertLastwinToString(LASTWIN);
+
     settextstyle(COMPLEX_FONT, 0, 2);
 
     outtextxy(275,625,"Current Money: ");
@@ -225,23 +256,54 @@ void generateVisuals(){
 // Updates the values of money, bet and last win
 void updateMoney(){
     MONEY_CHAR[0] = NULL;
-    convertMoneyValuesToStrings(MONEY,BET,LASTWIN);
+    convertMoneyToString(MONEY);
     readimagefile("Images\\black-bar.jpg",450,625,580,645);
     outtextxy(450,625,MONEY_CHAR);
 }
 
 void updateBet(){
     BET_CHAR[0] = NULL;
-    convertMoneyValuesToStrings(MONEY,BET,LASTWIN);
+    convertBetToString(BET);
     readimagefile("Images\\black-bar.jpg",450,665,580,685);
     outtextxy(450,665,BET_CHAR);
 }
 
 void updateLastwin(){
     LASTWIN_CHAR[0] = NULL;
-    convertMoneyValuesToStrings(MONEY,BET,LASTWIN);
+    convertLastwinToString(LASTWIN);
     readimagefile("Images\\black-bar.jpg",450,705,580,725);
     outtextxy(450,705,LASTWIN_CHAR);
+}
+
+void updateGambleMoney(){
+    LASTWIN_CHAR[0] = NULL;
+    convertLastwinToString(LASTWIN);
+    readimagefile("Images\\black-bar.jpg",100,135,250,200);
+    outtextxy(100,135,"Gamble Money");
+    outtextxy(100,160,LASTWIN_CHAR);
+}
+
+void updateGambleWin(){
+    LASTWIN_CHAR[0] = NULL;
+    convertLastwinToString(LASTWIN * 2);
+    readimagefile("Images\\black-bar.jpg",615,135,765,200);
+    outtextxy(615,135,"Gamble Win");
+    outtextxy(615,160,LASTWIN_CHAR);
+}
+
+void updateGambleHistory(){
+    cout << "History: ";
+    for(int i = 0; i < MAX_GAMBLE_HISTORY; i++){
+        readimagefile(GAMBLE_CHIPS_PATH[GAMBLE_HISTORY[i]], 300+i*CHIP_PIXELSIZE, 150, 350+i*CHIP_PIXELSIZE, 200);
+        cout << GAMBLE_HISTORY[i] << " ";
+    }
+    cout << '\n';
+}
+
+void updateGambleSpins(){
+    outtextxy(300,530,"Gamble Spins Left : ");
+    convertGambleSpinsToString(GAMBLE_SPINS);
+    outtextxy(540,530,SPINS_CHAR);
 }
 
 void winningsCalculator(int ID, int number){
@@ -449,8 +511,6 @@ void checkLine10(){
 }
 
 void checkAllLines(){
-    WIN = 0;
-
     checkLine1();
     checkLine2();
     checkLine3();
@@ -463,15 +523,16 @@ void checkAllLines(){
     checkLine10();
 
     if(WIN > 0){
-        MONEY += WIN;
         LASTWIN = WIN;
-        updateMoney();
         updateLastwin();
     }
 }
 
+
 void spin(){
     if(MONEY >= BET){
+        MONEY += WIN;
+        WIN = 0;
         MONEY -= BET;
         updateMoney();
 
@@ -485,6 +546,7 @@ void spin(){
         for(int j = 0; j < SLOT_COLUMNS; j++){
             for(int i = 0; i < SLOT_ROWS; i++){
                 int randomID = generateRandomPhotoID();
+                //checkStars(randomID);
 
                 VALUES_MATRIX[i][j] = randomID;
                 addNode(SLOT_LISTS[j], randomID);
@@ -501,17 +563,46 @@ void spin(){
     }
 }
 
-bool canSpin = true;
-bool isGambling = false;
-
 void generateRandomGamble(int value){
     int randomGamble = rand() % 2;
     readimagefile(GAMBLE_IMAGES_PATH[randomGamble],325,225,525,525);
+
+    for(int i = MAX_GAMBLE_HISTORY; i > 0; i--){
+        GAMBLE_HISTORY[i] = GAMBLE_HISTORY[i-1];
+    }
+    GAMBLE_HISTORY[0] = randomGamble;
+    updateGambleHistory();
+
+    GAMBLE_SPINS--;
+    updateGambleSpins();
+
     if(randomGamble == value){
         cout << "Doubled" << '\n';
+        WIN *= 2;
+        LASTWIN = WIN;
+        updateGambleMoney();
+        updateGambleWin();
+        delay(750);
+        readimagefile("Images//back-card.jpg",325,225,525,525);
     }
     else{
         cout << "Lost the money" << '\n';
+        isGambling = false;
+        canSpin = true;
+        WIN = 0;
+        LASTWIN = WIN;
+        updateGambleMoney();
+        updateGambleWin();
+        updateLastwin();
+        delay(750);
+
+        // Load old images
+        readimagefile("Images\\black-background.jpg",50,100,800,550);
+        for(int i = 0; i < SLOT_ROWS; i++){
+            for(int j = 0; j < SLOT_COLUMNS; j++){
+                readimagefile(IMAGES_PATH[VALUES_MATRIX[i][j]], 50+j*SLOT_PIXELSIZE, 100+i*SLOT_PIXELSIZE, 200+j*SLOT_PIXELSIZE, 250+i*SLOT_PIXELSIZE);
+            }
+        }
     }
 }
 
@@ -519,6 +610,7 @@ void gamble(){
     canSpin = false;
     isGambling = true;
     int mouseX = 0, mouseY = 0;
+    GAMBLE_SPINS = 5;
 
     readimagefile("Images\\black-background.jpg",50,100,800,550);
 
@@ -526,19 +618,17 @@ void gamble(){
     settextstyle(COMPLEX_FONT, 0, 2);
 
     outtextxy(100,135,"Gamble Money");
-    outtextxy(100,160,MONEY_CHAR);
+    outtextxy(100,160,LASTWIN_CHAR);
 
+    updateGambleWin();
     outtextxy(615,135,"Gamble Win");
-    outtextxy(615,160,MONEY_CHAR);
+    outtextxy(615,160,LASTWIN_CHAR);
 
-    outtextxy(300,530,"Gamble Spins Left : 5");
+    //outtextxy(300,530,"Gamble Spins Left : 5");
+    updateGambleSpins();
 
     outtextxy(380,115,"History");
-    readimagefile("Images\\black-chip.jpg",300,150,350,200);
-    readimagefile("Images\\red-chip.jpg",350,150,400,200);
-    readimagefile("Images\\black-chip.jpg",400,150,450,200);
-    readimagefile("Images\\red-chip.jpg",450,150,500,200);
-    readimagefile("Images\\black-chip.jpg",500,150,550,200);
+    updateGambleHistory();
 
     // Buttons
     readimagefile("Images\\back-card.jpg",325,225,525,525);
@@ -548,11 +638,15 @@ void gamble(){
     while(isGambling){
         getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
 
-        if(((mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) || (GetAsyncKeyState('C') & 0x8000))){
+        if(((GAMBLE_SPINS == 0)|| (mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) || (GetAsyncKeyState('C') & 0x8000) || (GetAsyncKeyState(' ') & 0x8000))){
             cout << "Exit Gamble Mode!" << '\n';
             isGambling = false;
             canSpin = true;
+            MONEY += WIN;
+            LASTWIN = WIN;
             WIN = 0;
+            updateMoney();
+            updateLastwin();
 
             // Load old images
             readimagefile("Images\\black-background.jpg",50,100,800,550);
@@ -563,12 +657,12 @@ void gamble(){
             }
         }
 
-        if(mouseX >= 100 && mouseX <= 250 && mouseY >= 300 && mouseY <= 450){
+        if((mouseX >= 100 && mouseX <= 250 && mouseY >= 300 && mouseY <= 450) || (GetAsyncKeyState(VK_LEFT) & 0x8000)){
             cout << "Black Gamble" << '\n';
             generateRandomGamble(0);
         }
 
-        if(mouseX >= 600 && mouseX <= 750 && mouseY >= 300 && mouseY <= 450){
+        if((mouseX >= 600 && mouseX <= 750 && mouseY >= 300 && mouseY <= 450) || (GetAsyncKeyState(VK_RIGHT) & 0x8000)){
             cout << "Red Gamble" << '\n';
             generateRandomGamble(1);
         }
@@ -642,6 +736,10 @@ int main()
     srand(time(NULL));
 
     generateVisuals();
+
+    for(int i = 0; i < MAX_GAMBLE_HISTORY; i++){
+        GAMBLE_HISTORY[i] = -1;
+    }
 
     while(gameCondition()){
         detectMouseClicks();
