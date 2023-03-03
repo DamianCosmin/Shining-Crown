@@ -14,7 +14,7 @@
 #define MAX_DIGITS_MONEY 12
 #define MAX_DIGITS_BET 5
 #define MAX_DIGITS_LASTWIN 12
-#define MAX_DIGITS_SPINS 1
+#define MAX_DIGITS_SPINS 2
 #define MAX_GAMBLE_HISTORY 5
 #define CHANCES 140
 using namespace std;
@@ -71,8 +71,7 @@ int BET = 100;
 int WIN = 0;
 int LASTWIN = 0;
 int GAMBLE_HISTORY[5];
-int GAMBLE_SPINS = 5;
-int STARS = 0;
+int GAMBLE_SPINS;
 
 char MONEY_CHAR[MAX_DIGITS_MONEY];
 char BET_CHAR[MAX_DIGITS_BET];
@@ -81,7 +80,6 @@ char SPINS_CHAR[MAX_DIGITS_SPINS];
 
 bool canSpin = true;
 bool isGambling = false;
-bool generatedStar = false;
 
 struct node{
     int info;
@@ -253,7 +251,7 @@ void generateVisuals(){
     readimagefile("Images\\bet-500.jpg",550,775,600,825);
 }
 
-// Updates the values of money, bet and last win
+// Updates the values of money, bet, last win and gamble details
 void updateMoney(){
     MONEY_CHAR[0] = NULL;
     convertMoneyToString(MONEY);
@@ -301,8 +299,9 @@ void updateGambleHistory(){
 }
 
 void updateGambleSpins(){
-    outtextxy(300,530,"Gamble Spins Left : ");
+    SPINS_CHAR[0] = NULL;
     convertGambleSpinsToString(GAMBLE_SPINS);
+    outtextxy(300,530,"Gamble Spins Left : ");
     outtextxy(540,530,SPINS_CHAR);
 }
 
@@ -563,17 +562,18 @@ void spin(){
     }
 }
 
-void generateRandomGamble(int value){
+void generateRandomGamble(int value, int spins){
     int randomGamble = rand() % 2;
     readimagefile(GAMBLE_IMAGES_PATH[randomGamble],325,225,525,525);
 
+    // Add newly generated gamble chip to history
     for(int i = MAX_GAMBLE_HISTORY; i > 0; i--){
         GAMBLE_HISTORY[i] = GAMBLE_HISTORY[i-1];
     }
     GAMBLE_HISTORY[0] = randomGamble;
     updateGambleHistory();
 
-    GAMBLE_SPINS--;
+    GAMBLE_SPINS = spins - 1;
     updateGambleSpins();
 
     if(randomGamble == value){
@@ -614,17 +614,10 @@ void gamble(){
 
     readimagefile("Images\\black-background.jpg",50,100,800,550);
 
-    // Gamble Text
+    // Gamble Visuals
     settextstyle(COMPLEX_FONT, 0, 2);
-
-    outtextxy(100,135,"Gamble Money");
-    outtextxy(100,160,LASTWIN_CHAR);
-
+    updateGambleMoney();
     updateGambleWin();
-    outtextxy(615,135,"Gamble Win");
-    outtextxy(615,160,LASTWIN_CHAR);
-
-    //outtextxy(300,530,"Gamble Spins Left : 5");
     updateGambleSpins();
 
     outtextxy(380,115,"History");
@@ -638,7 +631,7 @@ void gamble(){
     while(isGambling){
         getmouseclick(WM_LBUTTONDOWN, mouseX, mouseY);
 
-        if(((GAMBLE_SPINS == 0)|| (mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) || (GetAsyncKeyState('C') & 0x8000) || (GetAsyncKeyState(' ') & 0x8000))){
+        if(((GAMBLE_SPINS <= 0)|| (mouseX >= 50 && mouseX <= 200 && mouseY >= 600 && mouseY <= 750) || (GetAsyncKeyState('C') & 0x8000) || (GetAsyncKeyState(' ') & 0x8000))){
             cout << "Exit Gamble Mode!" << '\n';
             isGambling = false;
             canSpin = true;
@@ -659,12 +652,12 @@ void gamble(){
 
         if((mouseX >= 100 && mouseX <= 250 && mouseY >= 300 && mouseY <= 450) || (GetAsyncKeyState(VK_LEFT) & 0x8000)){
             cout << "Black Gamble" << '\n';
-            generateRandomGamble(0);
+            generateRandomGamble(0, GAMBLE_SPINS);
         }
 
         if((mouseX >= 600 && mouseX <= 750 && mouseY >= 300 && mouseY <= 450) || (GetAsyncKeyState(VK_RIGHT) & 0x8000)){
             cout << "Red Gamble" << '\n';
-            generateRandomGamble(1);
+            generateRandomGamble(1, GAMBLE_SPINS);
         }
     }
 }
