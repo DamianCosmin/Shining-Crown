@@ -61,9 +61,9 @@ const int MULTIPLICATORS[20][5] = {
     0,0,4,12,70,
     0,1,5,25,500,
     //Stage 3
-    0,0,5,20,100,
-    0,0,200,0,0,
-    0,0,0,0,0
+    0,5,10,25,100,
+    0,5,10,25,100,
+    0,10,50,100,1000
 };
 int VALUES_MATRIX[3][5];
 int MONEY = 5000;
@@ -72,6 +72,9 @@ int WIN = 0;
 int LASTWIN = 0;
 int GAMBLE_HISTORY[5];
 int GAMBLE_SPINS;
+int STARS;
+int DOLLARS;
+int CROWNS;
 
 char MONEY_CHAR[MAX_DIGITS_MONEY];
 char BET_CHAR[MAX_DIGITS_BET];
@@ -80,6 +83,9 @@ char SPINS_CHAR[MAX_DIGITS_SPINS];
 
 bool canSpin = true;
 bool isGambling = false;
+bool foundStar;
+bool foundDollar;
+bool foundCrown;
 
 struct node{
     int info;
@@ -204,6 +210,7 @@ void convertGambleSpinsToString(int spinsLeft){
     to_chars(spins_aux, spins_aux + MAX_DIGITS_SPINS, spinsLeft);
     strcpy(SPINS_CHAR, spins_aux);
 }
+
 
 void generateVisuals(){
     // Generate Title
@@ -509,6 +516,18 @@ void checkLine10(){
     winningsCalculator(temp_ID, cnt);
 }
 
+void checkScatters(){
+    if(DOLLARS > 0){
+        winningsCalculator(8,DOLLARS);
+    }
+    if(STARS > 0){
+        winningsCalculator(9,STARS);
+    }
+    if(CROWNS > 0){
+        winningsCalculator(10,CROWNS);
+    }
+}
+
 void checkAllLines(){
     checkLine1();
     checkLine2();
@@ -521,12 +540,130 @@ void checkAllLines(){
     checkLine9();
     checkLine10();
 
+    checkScatters();
+
     if(WIN > 0){
         LASTWIN = WIN;
         updateLastwin();
     }
 }
 
+
+//void checkDollars(int &value);
+//void checkStars(int &value);
+//void checkCrowns(int &value);
+
+void checkDollars(int &value){
+    if(value == 8 && foundDollar == false){
+        foundDollar = true;
+        //DOLLARS++;
+        return;
+    }
+
+    if(foundDollar == true){
+        value = generateRandomPhotoID();
+        while(value == 8){
+            value = generateRandomPhotoID();
+            if(foundStar == true && foundCrown == true){
+                while(value == 9 && value == 10){
+                    value = generateRandomPhotoID();
+                }
+            }
+            else if(foundStar == true && foundCrown == false){
+                while(value == 9){
+                    value = generateRandomPhotoID();
+                }
+                //checkCrowns(value);
+            }
+            else if(foundStar == false && foundCrown == true){
+                while(value == 10){
+                    value = generateRandomPhotoID();
+                }
+                //checkStars(value);
+            }
+        }
+    }
+}
+
+void checkStars(int &value){
+    if(value == 9 && foundStar == false){
+        foundStar = true;
+        //STARS++;
+        return;
+    }
+
+    if(foundStar == true){
+        value = generateRandomPhotoID();
+        while(value == 9){
+            value = generateRandomPhotoID();
+            if(foundDollar == true && foundCrown == true){
+                while(value == 8 && value == 10){
+                    value = generateRandomPhotoID();
+                }
+            }
+            else if(foundDollar == true && foundCrown == false){
+                while(value == 8){
+                    value = generateRandomPhotoID();
+                }
+                //checkCrowns(value);
+            }
+            else if(foundDollar == false && foundCrown == true){
+                while(value == 10){
+                    value = generateRandomPhotoID();
+                }
+                //checkDollars(value);
+            }
+        }
+    }
+}
+
+void checkCrowns(int &value){
+    if(value == 10 && foundCrown == false){
+        foundCrown = true;
+        //CROWNS++;
+        return;
+    }
+
+    if(foundCrown == true){
+        value = generateRandomPhotoID();
+        while(value == 10){
+            value = generateRandomPhotoID();
+            if(foundDollar == true && foundStar == true){
+                while(value == 8 && value == 9){
+                    value = generateRandomPhotoID();
+                }
+            }
+            else if(foundDollar == true && foundStar == false){
+                while(value == 8){
+                    value = generateRandomPhotoID();
+                }
+                //checkStars(value);
+            }
+            else if(foundDollar == false && foundStar == true){
+                while(value == 9){
+                    value = generateRandomPhotoID();
+                }
+                //checkDollars(value);
+            }
+        }
+    }
+}
+
+void countScatters(){
+    for(int i = 0; i < SLOT_ROWS; i++){
+        for(int j = 0; j < SLOT_COLUMNS; j++){
+            if(VALUES_MATRIX[i][j] == 8){
+                DOLLARS++;
+            }
+            if(VALUES_MATRIX[i][j] == 9){
+                STARS++;
+            }
+            if(VALUES_MATRIX[i][j] == 10){
+                CROWNS++;
+            }
+        }
+    }
+}
 
 void spin(){
     if(MONEY >= BET){
@@ -542,10 +679,16 @@ void spin(){
             deleteList(SLOT_LISTS[j]);
         }
 
+        STARS = DOLLARS = CROWNS = 0;
+
         for(int j = 0; j < SLOT_COLUMNS; j++){
+            foundStar = foundDollar = foundCrown = false;
             for(int i = 0; i < SLOT_ROWS; i++){
                 int randomID = generateRandomPhotoID();
-                //checkStars(randomID);
+
+                checkDollars(randomID);
+                checkStars(randomID);
+                checkCrowns(randomID);
 
                 VALUES_MATRIX[i][j] = randomID;
                 addNode(SLOT_LISTS[j], randomID);
@@ -555,7 +698,12 @@ void spin(){
             showList(SLOT_LISTS[j]);
         }
 
+        countScatters();
+        cout << "Stars: " << STARS << '\n';
+        cout << "Dollars: " << DOLLARS << '\n';
+        cout << "Crowns: " << CROWNS << '\n';
         checkAllLines();
+        cout << "WIN: " << WIN << '\n';
     }
     else{
         cout << "Not enough money!" << '\n';
@@ -663,7 +811,7 @@ void gamble(){
 }
 
 bool canGamble(){
-    return (WIN > 0 && WIN < 35 * BET) ? true : false;
+    return (WIN > 0 && WIN <= 50 * BET) ? true : false;
 }
 
 void detectMouseClicks(){
