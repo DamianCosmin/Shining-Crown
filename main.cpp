@@ -16,7 +16,7 @@
 #define MAX_DIGITS_LASTWIN 12
 #define MAX_DIGITS_SPINS 2
 #define MAX_GAMBLE_HISTORY 5
-#define CHANCES 140
+#define CHANCES 705
 using namespace std;
 
 /// VARIABLES
@@ -62,8 +62,8 @@ const int MULTIPLICATORS[20][5] = {
     0,1,5,25,500,
     //Stage 3
     0,5,10,25,100,
-    0,5,10,25,100,
-    0,10,50,100,1000
+    0,8,20,50,200,
+    0,20,50,100,1000
 };
 int VALUES_MATRIX[3][5];
 int MONEY = 5000;
@@ -138,41 +138,41 @@ int generateRandomPhotoID(){
     int random = (rand() % CHANCES);
 
     // Stage 1 returns
-    if(random >= 0 && random <= 19){
+    if(random >= 0 && random <= 99){
         return 0;
     }
-    if(random >= 20 && random <= 39){
+    if(random >= 100 && random <= 199){
         return 1;
     }
-    if(random >= 40 && random <= 59){
+    if(random >= 200 && random <= 299){
         return 2;
     }
-    if(random >= 60 && random <= 79){
+    if(random >= 300 && random <= 399){
         return 3;
     }
-    if(random >= 80 && random <= 99){
+    if(random >= 400 && random <= 499){
         return 4;
     }
 
     // Stage 2 returns
-    if(random >= 100 && random <= 109){
+    if(random >= 500 && random <= 549){
         return 5;
     }
-    if(random >= 110 && random <= 119){
+    if(random >= 550 && random <= 599){
         return 6;
     }
-    if(random >= 120 && random <= 129){
+    if(random >= 600 && random <= 649){
         return 7;
     }
 
     // Stage 3 returns
-    if(random >= 130 && random <= 133){
+    if(random >= 650 && random <= 674){
         return 8;
     }
-    if(random >= 134 && random <= 137){
+    if(random >= 675 && random <= 694){
         return 9;
     }
-    if(random >= 138 && random <= 139){
+    if(random >= 695 && random <= 704){
         return 10;
     }
 
@@ -549,14 +549,9 @@ void checkAllLines(){
 }
 
 
-//void checkDollars(int &value);
-//void checkStars(int &value);
-//void checkCrowns(int &value);
-
 void checkDollars(int &value){
     if(value == 8 && foundDollar == false){
         foundDollar = true;
-        //DOLLARS++;
         return;
     }
 
@@ -564,22 +559,15 @@ void checkDollars(int &value){
         value = generateRandomPhotoID();
         while(value == 8){
             value = generateRandomPhotoID();
-            if(foundStar == true && foundCrown == true){
-                while(value == 9 && value == 10){
-                    value = generateRandomPhotoID();
-                }
-            }
-            else if(foundStar == true && foundCrown == false){
+            if(foundStar == true && foundCrown == false){
                 while(value == 9){
                     value = generateRandomPhotoID();
                 }
-                //checkCrowns(value);
             }
             else if(foundStar == false && foundCrown == true){
                 while(value == 10){
                     value = generateRandomPhotoID();
                 }
-                //checkStars(value);
             }
         }
     }
@@ -588,7 +576,6 @@ void checkDollars(int &value){
 void checkStars(int &value){
     if(value == 9 && foundStar == false){
         foundStar = true;
-        //STARS++;
         return;
     }
 
@@ -596,22 +583,15 @@ void checkStars(int &value){
         value = generateRandomPhotoID();
         while(value == 9){
             value = generateRandomPhotoID();
-            if(foundDollar == true && foundCrown == true){
-                while(value == 8 && value == 10){
-                    value = generateRandomPhotoID();
-                }
-            }
-            else if(foundDollar == true && foundCrown == false){
+            if(foundDollar == true && foundCrown == false){
                 while(value == 8){
                     value = generateRandomPhotoID();
                 }
-                //checkCrowns(value);
             }
             else if(foundDollar == false && foundCrown == true){
                 while(value == 10){
                     value = generateRandomPhotoID();
                 }
-                //checkDollars(value);
             }
         }
     }
@@ -620,7 +600,6 @@ void checkStars(int &value){
 void checkCrowns(int &value){
     if(value == 10 && foundCrown == false){
         foundCrown = true;
-        //CROWNS++;
         return;
     }
 
@@ -628,22 +607,15 @@ void checkCrowns(int &value){
         value = generateRandomPhotoID();
         while(value == 10){
             value = generateRandomPhotoID();
-            if(foundDollar == true && foundStar == true){
-                while(value == 8 && value == 9){
-                    value = generateRandomPhotoID();
-                }
-            }
-            else if(foundDollar == true && foundStar == false){
+            if(foundDollar == true && foundStar == false){
                 while(value == 8){
                     value = generateRandomPhotoID();
                 }
-                //checkStars(value);
             }
             else if(foundDollar == false && foundStar == true){
                 while(value == 9){
                     value = generateRandomPhotoID();
                 }
-                //checkDollars(value);
             }
         }
     }
@@ -730,7 +702,7 @@ void generateRandomGamble(int value, int spins){
         LASTWIN = WIN;
         updateGambleMoney();
         updateGambleWin();
-        delay(750);
+        delay(800);
         readimagefile("Images//back-card.jpg",325,225,525,525);
     }
     else{
@@ -742,7 +714,7 @@ void generateRandomGamble(int value, int spins){
         updateGambleMoney();
         updateGambleWin();
         updateLastwin();
-        delay(750);
+        delay(800);
 
         // Load old images
         readimagefile("Images\\black-background.jpg",50,100,800,550);
